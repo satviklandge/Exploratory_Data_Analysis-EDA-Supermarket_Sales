@@ -5,7 +5,6 @@
 ![Pandas](https://img.shields.io/badge/Pandas-Data%20Analysis-150458?logo=pandas&logoColor=white)
 ![Matplotlib](https://img.shields.io/badge/Matplotlib-Visualization-11557c)
 ![Seaborn](https://img.shields.io/badge/Seaborn-Statistical%20Plots-4c72b0)
-![License](https://img.shields.io/badge/License-MIT-green)
 
 A comprehensive Exploratory Data Analysis (EDA) project on a supermarket sales dataset, uncovering patterns in customer behaviour, product performance, branch revenue, and purchasing trends using Python.
 
@@ -21,7 +20,6 @@ A comprehensive Exploratory Data Analysis (EDA) project on a supermarket sales d
 - [Getting Started](#-getting-started)
 - [Key Insights](#-key-insights)
 - [Contributing](#-contributing)
-- [License](#-license)
 
 ---
 
