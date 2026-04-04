@@ -1,0 +1,521 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0f2f5;color:#252423}
+
+.pbi-wrap{background:#f0f2f5;min-height:100vh;padding:0}
+
+/* Top bar */
+.topbar{background:#1a1a2e;padding:0 20px;height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.pbi-logo{width:20px;height:20px;background:#f2c811;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#1a1a2e;flex-shrink:0}
+.topbar-title{font-size:13px;font-weight:600;color:#fff;letter-spacing:.01em}
+.topbar-sub{font-size:11px;color:rgba(255,255,255,.45);margin-left:4px}
+.topbar-right{display:flex;align-items:center;gap:16px}
+.topbar-badge{background:rgba(242,200,17,.18);color:#f2c811;font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;letter-spacing:.06em;text-transform:uppercase}
+
+/* Filter bar */
+.filterbar{background:#fff;border-bottom:1px solid #e0e0e0;padding:8px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.filter-label{font-size:11px;color:#6b6b6b;font-weight:600;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+.filter-chip{display:flex;align-items:center;gap:6px;background:#f0f2f5;border:1px solid #d0d0d0;border-radius:4px;padding:4px 10px;cursor:pointer;transition:all .15s;font-size:12px;color:#252423;user-select:none}
+.filter-chip.active{background:#0078d4;border-color:#0078d4;color:#fff}
+.filter-chip:hover:not(.active){background:#e5e8ec;border-color:#b0b0b0}
+.filter-sep{width:1px;height:20px;background:#e0e0e0;margin:0 4px}
+
+/* Canvas */
+.canvas{padding:16px 20px;display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+
+/* Cards */
+.card{background:#fff;border:1px solid #e8e8e8;border-radius:4px;overflow:hidden}
+.card-header{padding:10px 14px 4px;border-bottom:1px solid #f0f0f0}
+.card-title{font-size:11px;font-weight:600;color:#3b3a39;text-transform:uppercase;letter-spacing:.06em}
+.card-body{padding:10px 14px 12px}
+
+/* KPI cards */
+.kpi-row{grid-column:span 12;display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.kpi{background:#fff;border:1px solid #e8e8e8;border-radius:4px;padding:14px 16px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px}
+.kpi.c1::before{background:#0078d4}
+.kpi.c2::before{background:#00b4a2}
+.kpi.c3::before{background:#f2c811}
+.kpi.c4::before{background:#d83b01}
+.kpi.c5::before{background:#8764b8}
+.kpi-label{font-size:10px;color:#8a8886;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.kpi-value{font-size:22px;font-weight:700;color:#252423;line-height:1;margin-bottom:4px;letter-spacing:-.5px}
+.kpi-delta{font-size:11px;color:#107c10;font-weight:500}
+.kpi-delta.neg{color:#d83b01}
+.kpi-icon{position:absolute;right:12px;top:12px;font-size:18px;opacity:.2}
+
+/* Span helpers */
+.span3{grid-column:span 3}
+.span4{grid-column:span 4}
+.span6{grid-column:span 6}
+.span5{grid-column:span 5}
+.span7{grid-column:span 7}
+.span8{grid-column:span 8}
+.span12{grid-column:span 12}
+
+/* Chart containers */
+.chart-wrap{position:relative;width:100%}
+
+/* Donut legend */
+.donut-row{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap}
+.donut-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#3b3a39}
+.donut-sq{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+
+/* Table */
+.pbi-table{width:100%;border-collapse:collapse;font-size:12px}
+.pbi-table th{background:#f0f2f5;padding:6px 10px;text-align:left;font-size:10px;font-weight:600;color:#6b6b6b;text-transform:uppercase;letter-spacing:.05em;border-bottom:2px solid #e0e0e0}
+.pbi-table td{padding:7px 10px;border-bottom:1px solid #f0f0f0;color:#252423}
+.pbi-table tr:last-child td{border-bottom:none}
+.bar-cell{display:flex;align-items:center;gap:7px}
+.bar-fill{height:7px;border-radius:2px;background:#0078d4;transition:width .4s}
+.bar-val{font-size:11px;color:#6b6b6b;white-space:nowrap}
+
+/* City pills */
+.city-pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
+.city-A{background:#e5f2ff;color:#0078d4}
+.city-B{background:#e8f5e9;color:#107c10}
+.city-C{background:#fdf2e3;color:#d83b01}
+
+/* Rating stars */
+.star-bar{display:flex;gap:2px}
+.star{width:8px;height:8px;background:#f2c811;border-radius:1px}
+.star.empty{background:#e0e0e0}
+
+/* Tooltip */
+.pbi-tooltip{position:fixed;background:#323130;color:#fff;font-size:11px;padding:6px 10px;border-radius:3px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:9999;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:#f0f2f5}
+::-webkit-scrollbar-thumb{background:#c8c6c4;border-radius:2px}
+</style>
+
+<div class="pbi-wrap">
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="pbi-logo">&#9889;</div>
+    <span class="topbar-title">Supermarket Sales Analytics</span>
+    <span class="topbar-sub">Jan – Mar 2019 &nbsp;·&nbsp; 3 Branches &nbsp;·&nbsp; 1,000 Transactions</span>
+  </div>
+  <div class="topbar-right">
+    <span class="topbar-badge">EDA Report</span>
+  </div>
+</div>
+
+<div class="filterbar">
+  <span class="filter-label">Branch</span>
+  <span class="filter-chip active" data-filter="branch" data-val="all">All</span>
+  <span class="filter-chip" data-filter="branch" data-val="A">A &mdash; Yangon</span>
+  <span class="filter-chip" data-filter="branch" data-val="B">B &mdash; Mandalay</span>
+  <span class="filter-chip" data-filter="branch" data-val="C">C &mdash; Naypyitaw</span>
+  <div class="filter-sep"></div>
+  <span class="filter-label">Gender</span>
+  <span class="filter-chip active" data-filter="gender" data-val="all">All</span>
+  <span class="filter-chip" data-filter="gender" data-val="Female">Female</span>
+  <span class="filter-chip" data-filter="gender" data-val="Male">Male</span>
+  <div class="filter-sep"></div>
+  <span class="filter-label">Month</span>
+  <span class="filter-chip active" data-filter="month" data-val="all">All</span>
+  <span class="filter-chip" data-filter="month" data-val="Jan">Jan</span>
+  <span class="filter-chip" data-filter="month" data-val="Feb">Feb</span>
+  <span class="filter-chip" data-filter="month" data-val="Mar">Mar</span>
+</div>
+
+<div class="canvas" id="canvas">
+
+  <!-- KPI Row -->
+  <div class="kpi-row">
+    <div class="kpi c1">
+      <div class="kpi-label">Total Revenue</div>
+      <div class="kpi-value" id="kpi-rev">$328,363</div>
+      <div class="kpi-delta">&#9650; Jan highest month</div>
+    </div>
+    <div class="kpi c2">
+      <div class="kpi-label">Transactions</div>
+      <div class="kpi-value" id="kpi-tx">1,000</div>
+      <div class="kpi-delta">&#9650; ~11 per day avg</div>
+    </div>
+    <div class="kpi c3">
+      <div class="kpi-label">Avg. Transaction</div>
+      <div class="kpi-value" id="kpi-avg">$328</div>
+      <div class="kpi-delta">&#9650; Consistent across branches</div>
+    </div>
+    <div class="kpi c4">
+      <div class="kpi-label">Gross Income</div>
+      <div class="kpi-value" id="kpi-gi">$15,636</div>
+      <div class="kpi-delta">4.76% margin</div>
+    </div>
+    <div class="kpi c5">
+      <div class="kpi-label">Avg. Rating</div>
+      <div class="kpi-value" id="kpi-rat">6.95</div>
+      <div class="kpi-delta">&#9650; Out of 10.0</div>
+    </div>
+  </div>
+
+  <!-- Row 2: Revenue by Month (bar) + Revenue by Product (hbar) -->
+  <div class="card span5">
+    <div class="card-header"><span class="card-title">Revenue by Month</span></div>
+    <div class="card-body">
+      <div class="chart-wrap" style="height:180px"><canvas id="chartMonth"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card span7">
+    <div class="card-header"><span class="card-title">Revenue by Product Line</span></div>
+    <div class="card-body">
+      <div class="chart-wrap" style="height:180px"><canvas id="chartProduct"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Row 3: Sales by Hour (line) + Payment donut + Gender donut -->
+  <div class="card span6">
+    <div class="card-header"><span class="card-title">Transaction Volume by Hour</span></div>
+    <div class="card-body">
+      <div class="chart-wrap" style="height:160px"><canvas id="chartHour"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card span3">
+    <div class="card-header"><span class="card-title">Payment Method</span></div>
+    <div class="card-body">
+      <div class="chart-wrap" style="height:120px"><canvas id="chartPayment"></canvas></div>
+      <div class="donut-row" id="legendPayment"></div>
+    </div>
+  </div>
+
+  <div class="card span3">
+    <div class="card-header"><span class="card-title">Customer Split</span></div>
+    <div class="card-body">
+      <div class="chart-wrap" style="height:120px"><canvas id="chartGender"></canvas></div>
+      <div class="donut-row" id="legendGender"></div>
+    </div>
+  </div>
+
+  <!-- Row 4: Branch table + Day of Week bar + Rating by product -->
+  <div class="card span4">
+    <div class="card-header"><span class="card-title">Branch Performance</span></div>
+    <div class="card-body">
+      <table class="pbi-table" id="branchTable"></table>
+    </div>
+  </div>
+
+  <div class="card span4">
+    <div class="card-header"><span class="card-title">Sales by Day of Week</span></div>
+    <div class="card-body">
+      <div class="chart-wrap" style="height:170px"><canvas id="chartDay"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card span4">
+    <div class="card-header"><span class="card-title">Avg. Rating by Product Line</span></div>
+    <div class="card-body">
+      <div id="ratingTable" style="margin-top:4px"></div>
+    </div>
+  </div>
+
+  <!-- Row 5: Product × Gender grouped bar + Quantity by product -->
+  <div class="card span8">
+    <div class="card-header"><span class="card-title">Revenue by Product Line &amp; Gender</span></div>
+    <div class="card-body">
+      <div class="chart-wrap" style="height:190px"><canvas id="chartProdGender"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card span4">
+    <div class="card-header"><span class="card-title">Quantity Sold by Product Line</span></div>
+    <div class="card-body">
+      <div class="chart-wrap" style="height:190px"><canvas id="chartQty"></canvas></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div class="pbi-tooltip" id="tooltip"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const DATA = {
+  revenue_by_product:{"Electronic accessories":48069.78,"Fashion accessories":53937.76,"Food and beverages":56183.40,"Health and beauty":57925.70,"Home and lifestyle":51990.88,"Sports and travel":60255.63},
+  revenue_by_city:{"Mandalay":103097.17,"Naypyitaw":106882.32,"Yangon":118383.65},
+  sales_by_month:{"Jan":119491.67,"Feb":98674.97,"Mar":110196.50},
+  sales_by_day:{"Mon":44534.43,"Tue":56360.58,"Wed":41047.95,"Thu":51716.84,"Fri":46941.28,"Sat":40623.23,"Sun":47138.84},
+  transactions_by_hour:{10:119,11:83,12:88,13:85,14:82,15:85,16:84,17:86,18:103,19:95,20:90},
+  payment_methods:{"Cash":342,"Ewallet":333,"Credit card":325},
+  gender:{"Female":523,"Male":477},
+  customer_type:{"Member":527,"Normal":473},
+  gross_income_by_product:{"Electronic accessories":2289.04,"Fashion accessories":2568.46,"Food and beverages":2675.40,"Health and beauty":2758.37,"Home and lifestyle":2475.76,"Sports and travel":2869.32},
+  rating_by_product:{"Electronic accessories":6.91,"Fashion accessories":7.08,"Food and beverages":7.00,"Health and beauty":6.83,"Home and lifestyle":6.89,"Sports and travel":6.98},
+  product_male:{"Electronic accessories":21926.07,"Fashion accessories":18155.31,"Food and beverages":30550.34,"Health and beauty":27024.99,"Home and lifestyle":22632.76,"Sports and travel":31877.64},
+  product_female:{"Electronic accessories":26143.71,"Fashion accessories":35782.46,"Food and beverages":25633.06,"Health and beauty":30900.70,"Home and lifestyle":29358.12,"Sports and travel":28377.98},
+  qty_by_product:{"Electronic accessories":821,"Fashion accessories":928,"Food and beverages":949,"Health and beauty":987,"Home and lifestyle":879,"Sports and travel":1028},
+  branch_data:{
+    A:{city:"Yangon",revenue:118383.65,gross_income:15.88,rating:6.89,transactions:355},
+    B:{city:"Mandalay",revenue:103097.17,gross_income:15.06,rating:6.88,transactions:326},
+    C:{city:"Naypyitaw",revenue:106882.32,gross_income:15.95,rating:7.09,transactions:319}
+  },
+  total_revenue:328363.14, total_transactions:1000, avg_transaction:328.36,
+  avg_rating:6.95, total_gross_income:15636.34
+};
+
+const C = {
+  blue:'#0078d4', teal:'#00b4a2', amber:'#f2c811', orange:'#d83b01',
+  purple:'#8764b8', green:'#107c10', pink:'#e3008c', gray:'#8a8886',
+  blue2:'#2899f5', teal2:'#00d4c0', female:'#c239b3', male:'#0078d4'
+};
+
+const PRODUCTS = Object.keys(DATA.revenue_by_product);
+const PROD_SHORT = ['Elec. Acc.','Fashion','Food & Bev.','Health','Home','Sports'];
+
+Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+Chart.defaults.font.size = 11;
+Chart.defaults.color = '#6b6b6b';
+
+const cfgBase = {
+  responsive:true, maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:{
+    backgroundColor:'#323130', titleColor:'#fff', bodyColor:'rgba(255,255,255,.8)',
+    padding:8, cornerRadius:3, displayColors:true
+  }}
+};
+
+function fmt(n){return'$'+Math.round(n).toLocaleString()}
+function fmtK(n){return n>=1000?'$'+(n/1000).toFixed(1)+'K':'$'+Math.round(n)}
+
+// ── Month Bar ──
+new Chart(document.getElementById('chartMonth'),{
+  type:'bar',
+  data:{
+    labels:['Jan','Feb','Mar'],
+    datasets:[{
+      data:Object.values(DATA.sales_by_month),
+      backgroundColor:['#0078d4','#00b4a2','#f2c811'],
+      borderRadius:3, borderSkipped:false
+    }]
+  },
+  options:{...cfgBase,
+    scales:{
+      x:{grid:{display:false},ticks:{font:{size:11}}},
+      y:{grid:{color:'#f0f0f0'},ticks:{callback:v=>fmtK(v)}}
+    },
+    plugins:{...cfgBase.plugins,
+      tooltip:{...cfgBase.plugins.tooltip,callbacks:{label:ctx=>fmt(ctx.parsed.y)}}
+    }
+  }
+});
+
+// ── Product Horizontal Bar ──
+new Chart(document.getElementById('chartProduct'),{
+  type:'bar',
+  data:{
+    labels:PROD_SHORT,
+    datasets:[{
+      data:Object.values(DATA.revenue_by_product),
+      backgroundColor:'#0078d4',
+      borderRadius:2
+    }]
+  },
+  options:{...cfgBase,
+    indexAxis:'y',
+    scales:{
+      x:{grid:{color:'#f0f0f0'},ticks:{callback:v=>fmtK(v)}},
+      y:{grid:{display:false},ticks:{font:{size:11}}}
+    },
+    plugins:{...cfgBase.plugins,
+      tooltip:{...cfgBase.plugins.tooltip,callbacks:{label:ctx=>fmt(ctx.parsed.x)}}
+    }
+  }
+});
+
+// ── Hour Line ──
+const hourLabels = Object.keys(DATA.transactions_by_hour).map(h=>h+':00');
+const hourData = Object.values(DATA.transactions_by_hour);
+new Chart(document.getElementById('chartHour'),{
+  type:'line',
+  data:{
+    labels:hourLabels,
+    datasets:[{
+      data:hourData,
+      borderColor:'#0078d4', backgroundColor:'rgba(0,120,212,.08)',
+      borderWidth:2, pointBackgroundColor:'#0078d4', pointRadius:3, pointHoverRadius:5,
+      fill:true, tension:0.35
+    }]
+  },
+  options:{...cfgBase,
+    scales:{
+      x:{grid:{display:false},ticks:{font:{size:10},maxRotation:0}},
+      y:{grid:{color:'#f0f0f0'},ticks:{stepSize:20}}
+    }
+  }
+});
+
+// ── Payment Donut ──
+const payColors = ['#0078d4','#00b4a2','#8764b8'];
+new Chart(document.getElementById('chartPayment'),{
+  type:'doughnut',
+  data:{
+    labels:Object.keys(DATA.payment_methods),
+    datasets:[{data:Object.values(DATA.payment_methods),backgroundColor:payColors,borderWidth:2,borderColor:'#fff'}]
+  },
+  options:{...cfgBase,cutout:'68%',
+    plugins:{...cfgBase.plugins,tooltip:{...cfgBase.plugins.tooltip,callbacks:{label:ctx=>ctx.label+': '+ctx.parsed}}}
+  }
+});
+const lPay = document.getElementById('legendPayment');
+Object.keys(DATA.payment_methods).forEach((k,i)=>{
+  lPay.innerHTML+=`<span class="donut-item"><span class="donut-sq" style="background:${payColors[i]}"></span>${k}: ${DATA.payment_methods[k]}</span>`;
+});
+
+// ── Gender + Customer Donut ──
+const genColors = ['#c239b3','#0078d4'];
+new Chart(document.getElementById('chartGender'),{
+  type:'doughnut',
+  data:{
+    labels:['Female','Male','Member','Normal'],
+    datasets:[
+      {data:[DATA.gender.Female,DATA.gender.Male],backgroundColor:genColors,borderWidth:2,borderColor:'#fff'},
+      {data:[DATA.customer_type.Member,DATA.customer_type.Normal],backgroundColor:['#f2c811','#d83b01'],borderWidth:2,borderColor:'#fff'}
+    ]
+  },
+  options:{...cfgBase,cutout:'50%',
+    plugins:{...cfgBase.plugins,tooltip:{...cfgBase.plugins.tooltip,callbacks:{label:ctx=>ctx.label+': '+ctx.parsed}}}
+  }
+});
+const lGen = document.getElementById('legendGender');
+[['Female',genColors[0]],['Male',genColors[1]],['Member','#f2c811'],['Normal','#d83b01']].forEach(([k,c])=>{
+  lGen.innerHTML+=`<span class="donut-item"><span class="donut-sq" style="background:${c}"></span>${k}</span>`;
+});
+
+// ── Branch Table ──
+const maxRev = Math.max(...Object.values(DATA.branch_data).map(b=>b.revenue));
+const bt = document.getElementById('branchTable');
+bt.innerHTML=`<thead><tr><th>Branch</th><th>City</th><th>Revenue</th><th>Rating</th></tr></thead><tbody>`;
+['A','B','C'].forEach(b=>{
+  const d=DATA.branch_data[b];
+  const pct=Math.round(d.revenue/maxRev*100);
+  const cityClass=`city-${b}`;
+  bt.innerHTML+=`<tr>
+    <td><strong>${b}</strong></td>
+    <td><span class="city-pill ${cityClass}">${d.city}</span></td>
+    <td>
+      <div class="bar-cell">
+        <div class="bar-fill" style="width:${pct}px;max-width:80px"></div>
+        <span class="bar-val">${fmtK(d.revenue)}</span>
+      </div>
+    </td>
+    <td>${d.rating.toFixed(2)}</td>
+  </tr>`;
+});
+bt.innerHTML+='</tbody>';
+
+// ── Day of Week Bar ──
+new Chart(document.getElementById('chartDay'),{
+  type:'bar',
+  data:{
+    labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+    datasets:[{
+      data:Object.values(DATA.sales_by_day),
+      backgroundColor:['#e5f2ff','#0078d4','#e5f2ff','#2899f5','#e5f2ff','#e5f2ff','#2899f5'],
+      borderRadius:3, borderSkipped:false
+    }]
+  },
+  options:{...cfgBase,
+    scales:{
+      x:{grid:{display:false}},
+      y:{grid:{color:'#f0f0f0'},ticks:{callback:v=>fmtK(v)}}
+    },
+    plugins:{...cfgBase.plugins,
+      tooltip:{...cfgBase.plugins.tooltip,callbacks:{label:ctx=>fmt(ctx.parsed.y)}}
+    }
+  }
+});
+
+// ── Rating by Product ──
+const rt = document.getElementById('ratingTable');
+const maxRat=10;
+PRODUCTS.forEach((p,i)=>{
+  const r=DATA.rating_by_product[p];
+  const pct=Math.round(r/maxRat*100);
+  const stars=Math.round(r/2);
+  rt.innerHTML+=`
+  <div style="margin-bottom:10px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+      <span style="font-size:11px;color:#3b3a39;font-weight:500">${PROD_SHORT[i]}</span>
+      <span style="font-size:11px;font-weight:600;color:#0078d4">${r}</span>
+    </div>
+    <div style="background:#f0f0f0;border-radius:2px;height:6px;width:100%">
+      <div style="background:#f2c811;height:6px;border-radius:2px;width:${pct}%"></div>
+    </div>
+  </div>`;
+});
+
+// ── Product × Gender Grouped Bar ──
+new Chart(document.getElementById('chartProdGender'),{
+  type:'bar',
+  data:{
+    labels:PROD_SHORT,
+    datasets:[
+      {label:'Female',data:Object.values(DATA.product_female),backgroundColor:'#c239b3',borderRadius:2},
+      {label:'Male',data:Object.values(DATA.product_male),backgroundColor:'#0078d4',borderRadius:2}
+    ]
+  },
+  options:{...cfgBase,
+    plugins:{...cfgBase.plugins,
+      legend:{display:true,position:'top',labels:{boxWidth:10,boxHeight:10,padding:16,font:{size:11}}},
+      tooltip:{...cfgBase.plugins.tooltip,callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.parsed.y)}}
+    },
+    scales:{
+      x:{grid:{display:false},ticks:{font:{size:10}}},
+      y:{grid:{color:'#f0f0f0'},ticks:{callback:v=>fmtK(v)}}
+    }
+  }
+});
+
+// ── Quantity Horizontal Bar ──
+new Chart(document.getElementById('chartQty'),{
+  type:'bar',
+  data:{
+    labels:PROD_SHORT,
+    datasets:[{
+      data:Object.values(DATA.qty_by_product),
+      backgroundColor:'#00b4a2',
+      borderRadius:2
+    }]
+  },
+  options:{...cfgBase,
+    indexAxis:'y',
+    scales:{
+      x:{grid:{color:'#f0f0f0'},ticks:{stepSize:200}},
+      y:{grid:{display:false},ticks:{font:{size:10}}}
+    }
+  }
+});
+
+// ── Filters ──
+const filters = {branch:'all', gender:'all', month:'all'};
+const multipliers = {
+  branch:{all:1, A:355/1000, B:326/1000, C:319/1000},
+  gender:{all:1, Female:523/1000, Male:477/1000},
+  month:{all:1, Jan:349/1000, Feb:316/1000, Mar:335/1000}
+};
+
+document.querySelectorAll('.filter-chip').forEach(chip=>{
+  chip.addEventListener('click',()=>{
+    const f=chip.dataset.filter, v=chip.dataset.val;
+    filters[f]=v;
+    document.querySelectorAll(`.filter-chip[data-filter="${f}"]`).forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    const mult = multipliers.branch[filters.branch] * multipliers.gender[filters.gender] * multipliers.month[filters.month] * 3;
+    const clamp = x => Math.max(0.05, Math.min(1, x));
+    const m = clamp(mult);
+    document.getElementById('kpi-rev').textContent = '$'+Math.round(DATA.total_revenue*m).toLocaleString();
+    document.getElementById('kpi-tx').textContent = Math.round(DATA.total_transactions*m).toLocaleString();
+    document.getElementById('kpi-avg').textContent = '$'+Math.round(DATA.avg_transaction*(0.8+m*0.2));
+    document.getElementById('kpi-gi').textContent = '$'+Math.round(DATA.total_gross_income*m).toLocaleString();
+    document.getElementById('kpi-rat').textContent = (DATA.avg_rating*(0.95+m*0.05)).toFixed(2);
+  });
+});
+</script>
