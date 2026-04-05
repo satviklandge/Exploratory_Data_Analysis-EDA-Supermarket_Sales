@@ -10,6 +10,13 @@ A comprehensive Exploratory Data Analysis (EDA) project on a supermarket sales d
 
 ---
 
+##  Dashboard Preview
+
+![Dashboard 1](assets/img_1png)
+![Dashboard 2](assets/img_2.png)
+
+---
+
 ##  Table of Contents
 
 - [Overview](#-overview)
